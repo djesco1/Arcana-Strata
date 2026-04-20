@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(sed -i 's/id: `a\\\\${Date\\\\.now\\(\\)}`/id: crypto.randomUUID\\(\\)/g' src/components/bac/ActoresPanel.tsx)",
+      "Bash(sed -i 's/id: `cp\\\\${Date\\\\.now\\(\\)}`/id: crypto.randomUUID\\(\\)/g' src/components/bac/ComponentesPanel.tsx)",
+      "Bash(sed -i 's/id: `e\\\\${Date\\\\.now\\(\\)}`/id: crypto.randomUUID\\(\\)/g' src/components/bac/EscenariosPanel.tsx)",
+      "Bash(sed -i 's/id: `c\\\\${Date\\\\.now\\(\\)}`/id: crypto.randomUUID\\(\\)/g' src/components/bac/CanalesPanel.tsx)",
+      "Bash(sed -i 's/id: `s\\\\${Date\\\\.now\\(\\)}`/id: crypto.randomUUID\\(\\)/g' src/components/bac/ServiciosPanel.tsx)",
+      "Bash(python3 -c \" import sys, json lines = sys.stdin.read\\(\\).strip\\(\\).split\\('\\\\n'\\) for line in lines[-20:]: try: obj = json.loads\\(line\\) role = obj.get\\('role',''\\) content = obj.get\\('content',''\\) if isinstance\\(content, list\\): for c in content: if isinstance\\(c, dict\\) and c.get\\('type'\\) == 'text': print\\(f'[{role}]: {c[\\\\\"text\\\\\"][:300]}'\\) elif isinstance\\(content, str\\): print\\(f'[{role}]: {content[:300]}'\\) except: pass \")"
+    ]
+  }
+}
