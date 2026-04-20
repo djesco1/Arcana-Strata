@@ -27,7 +27,7 @@ export function CashFlowChart({ flujos }: Props) {
         <ReferenceLine y={0} stroke="var(--border-md)" />
         <Tooltip
           contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--border-md)', borderRadius: 10, fontSize: 12, fontFamily: 'Raleway, sans-serif', color: 'var(--text-hi)' }}
-          formatter={(v: number) => [fmt(v), '']}
+          formatter={(v: any) => v !== undefined ? [fmt(v), ''] : ['', '']}
           cursor={{ fill: "var(--bg-card-hover)" }}
         />
         <Legend wrapperStyle={{ fontSize: 11, fontFamily: 'Raleway, sans-serif', paddingTop: 8, color: 'var(--text-dim)' }} />

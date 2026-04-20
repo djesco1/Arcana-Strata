@@ -19,18 +19,6 @@ const MODELOS: { value: ModeloImpactado; label: string; color: string }[] = [
   { value: 'indicadores',    label: 'Indicadores',    color: COLORS.bac18 },
 ]
 
-function ModeloBadge({ modelo }: { modelo: ModeloImpactado }) {
-  const m = MODELOS.find(x => x.value === modelo)
-  return (
-    <span style={{
-      fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', padding: '2px 8px',
-      borderRadius: 20, background: `${m?.color}22`, color: m?.color, whiteSpace: 'nowrap',
-    }}>
-      {m?.label}
-    </span>
-  )
-}
-
 function ModeloSelect({ value, onChange }: { value: ModeloImpactado; onChange: (v: ModeloImpactado) => void }) {
   return (
     <div style={{ position: 'relative' }}>
@@ -50,57 +38,6 @@ function ModeloSelect({ value, onChange }: { value: ModeloImpactado; onChange: (
         position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)',
         pointerEvents: 'none', color: 'var(--text-lo)',
       }} />
-    </div>
-  )
-}
-
-// ── Decision row inside a PromesaDeValor ──────────────────────────────────────
-
-function DecisionRow({ decision, onUpdate, onRemove, colTemplate }: {
-  decision: DecisionEstrategica
-  onUpdate: (p: Partial<DecisionEstrategica>) => void
-  onRemove: () => void
-  colTemplate: string
-}) {
-  return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: colTemplate,
-      gap: 10, padding: '8px 16px', alignItems: 'start',
-      borderBottom: '1px solid var(--border-lo)',
-    }}>
-      <input
-        value={decision.nombre}
-        onChange={e => onUpdate({ nombre: e.target.value })}
-        placeholder="Nombre de la decisión…"
-        style={{
-          background: 'transparent', border: 'none', borderBottom: '1px solid var(--border-lo)',
-          color: 'var(--text-hi)', fontFamily: 'Raleway, sans-serif',
-          fontSize: 12, fontWeight: 600, outline: 'none', padding: '2px 0',
-        }}
-        onFocus={e => (e.currentTarget.style.borderBottomColor = C)}
-        onBlur={e => (e.currentTarget.style.borderBottomColor = 'var(--border-lo)')}
-      />
-      <ModeloSelect value={decision.modelo} onChange={v => onUpdate({ modelo: v })} />
-      <textarea
-        value={decision.descripcion}
-        onChange={e => onUpdate({ descripcion: e.target.value })}
-        placeholder="Descripción de la decisión estratégica…"
-        rows={2}
-        style={{
-          resize: 'vertical', background: 'transparent', border: 'none',
-          borderBottom: '1px solid var(--border-lo)',
-          color: 'var(--text-md)', fontFamily: 'Raleway, sans-serif',
-          fontSize: 11, lineHeight: 1.6, outline: 'none', padding: '2px 0',
-        }}
-        onFocus={e => (e.currentTarget.style.borderBottomColor = C)}
-        onBlur={e => (e.currentTarget.style.borderBottomColor = 'var(--border-lo)')}
-      />
-      <button
-        onClick={onRemove}
-        style={{ color: '#F87171', background: 'none', border: 'none', cursor: 'pointer', paddingTop: 4 }}
-      >
-        <Trash2 size={11} />
-      </button>
     </div>
   )
 }

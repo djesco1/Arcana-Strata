@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Plus, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
 import { useStrategicStore } from '../../store/strategicStore'
-import type { AccionEstrategica, IndicadorAporte } from '../../types/strategic'
+import type { AccionEstrategica } from '../../types/strategic'
 import { COLORS } from './colors'
 
 const C = COLORS.bac22

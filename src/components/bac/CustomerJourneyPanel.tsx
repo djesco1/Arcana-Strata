@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Trash2, ChevronDown, ChevronRight, X, Zap, Users, Smartphone } from 'lucide-react'
+import { Plus, Trash2, ChevronDown, ChevronRight, X, Zap } from 'lucide-react'
 import { useBACStore } from '../../store/bacStore'
 import type { CustomerJourney, EtapaJourney, AccionJourney, Canal } from '../../types/bac'
 

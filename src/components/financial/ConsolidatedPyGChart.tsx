@@ -26,7 +26,7 @@ export function ConsolidatedPyGChart({ periodo }: Props) {
         <YAxis tickFormatter={fmt} tick={{ fontSize: 10, fill: 'var(--text-xdim)', fontFamily: 'Raleway, sans-serif' }} axisLine={false} tickLine={false} width={52} />
         <Tooltip
           contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--border-md)', borderRadius: 10, fontSize: 12, fontFamily: 'Raleway, sans-serif', color: 'var(--text-hi)' }}
-          formatter={(v: number) => [fmt(v), 'Valor']}
+          formatter={(v: any) => v !== undefined ? [fmt(v), 'Valor'] : ['', 'Valor']}
           cursor={{ fill: 'var(--bg-card-hover)' }}
         />
         <Bar dataKey="value" radius={[4, 4, 0, 0]}>

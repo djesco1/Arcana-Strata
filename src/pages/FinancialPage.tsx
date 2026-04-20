@@ -349,7 +349,7 @@ function FinancialContent() {
                             onChange={v => dispatch({ type: 'UPDATE_PERIODO', lineaId: activeLinea.id, periodo: { ...activePeriodo, balance: { ...activePeriodo.balance, patrimonio: v } } })} />
                         </div>
                       </div>
-                      <BalanceChart balance={activePeriodo.balance} periodoLabel={activePeriodo.label} />
+                      <BalanceChart balance={activePeriodo.balance} />
                     </ChartCard>
                   </>
                 )}

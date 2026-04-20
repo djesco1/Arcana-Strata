@@ -21,7 +21,7 @@ function buildLayers(acciones: AccionEstrategica[]): AccionEstrategica[][] {
   }
 
   const layers: AccionEstrategica[][] = []
-  let remaining = [...acciones.map((a, i) => i)]
+  let remaining = [...acciones.map((_, i) => i)]
 
   while (remaining.length > 0) {
     const layer = remaining.filter(i => inDegree[i] === 0)
@@ -48,8 +48,8 @@ export function GrafoDependenciasSection() {
   const acciones = state.ejecucion?.acciones ?? []
   const [hovered, setHovered] = useState<string | null>(null)
 
-  const { layers, positions, edges, svgW, svgH } = useMemo(() => {
-    if (acciones.length === 0) return { layers: [], positions: new Map(), edges: [], svgW: 0, svgH: 0 }
+  const { positions, edges, svgW, svgH } = useMemo(() => {
+    if (acciones.length === 0) return { positions: new Map(), edges: [], svgW: 0, svgH: 0 }
 
     const layers = buildLayers(acciones)
     const positions = new Map<string, { x: number; y: number }>()
@@ -79,7 +79,7 @@ export function GrafoDependenciasSection() {
       }
     }
 
-    return { layers, positions, edges, svgW, svgH }
+    return { positions, edges, svgW, svgH }
   }, [acciones])
 
   if (acciones.length === 0) return (
@@ -151,7 +151,7 @@ export function GrafoDependenciasSection() {
           })}
 
           {/* Nodes */}
-          {acciones.map((a, i) => {
+          {acciones.map((a) => {
             const pos = positions.get(a.id)
             if (!pos) return null
             const code = getCode(a.id)

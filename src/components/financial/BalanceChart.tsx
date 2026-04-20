@@ -7,10 +7,9 @@ import { fmt } from './utils'
 
 interface Props {
   balance: BalanceGeneral
-  periodoLabel?: string
 }
 
-export function BalanceChart({ balance, periodoLabel = 'Período' }: Props) {
+export function BalanceChart({ balance }: Props) {
   const data = [
     {
       name: 'Activo',
@@ -25,8 +24,6 @@ export function BalanceChart({ balance, periodoLabel = 'Período' }: Props) {
     },
   ]
 
-  const _ = periodoLabel // used in title only
-
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart data={data} barCategoryGap="40%">
@@ -35,7 +32,7 @@ export function BalanceChart({ balance, periodoLabel = 'Período' }: Props) {
         <YAxis tickFormatter={fmt} tick={{ fontSize: 10, fill: 'var(--text-xdim)', fontFamily: 'Raleway, sans-serif' }} axisLine={false} tickLine={false} width={48} />
         <Tooltip
           contentStyle={{ background: 'var(--bg-surface)', border: '1px solid var(--border-md)', borderRadius: 10, fontSize: 12, fontFamily: 'Raleway, sans-serif', color: 'var(--text-hi)' }}
-          formatter={(v: number) => [fmt(v), '']}
+          formatter={(v: any) => v !== undefined ? [fmt(v), ''] : ['', '']}
           cursor={{ fill: "var(--bg-card-hover)" }}
         />
         <Legend wrapperStyle={{ fontSize: 11, fontFamily: 'Raleway, sans-serif', paddingTop: 8, color: 'var(--text-dim)' }} />

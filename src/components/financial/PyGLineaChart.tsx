@@ -35,7 +35,7 @@ export function PyGLineaChart({ ie }: Props) {
         <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--text-dim)', fontFamily: 'Raleway' }} />
         <YAxis tick={{ fontSize: 10, fill: 'var(--text-dim)', fontFamily: 'Raleway' }} tickFormatter={v => fmt(v)} />
         <Tooltip
-          formatter={(v: number) => [`$ ${fmt(v)}`, '']}
+          formatter={(v: any) => v !== undefined ? [`$ ${fmt(v)}`, ''] : ['', '']}
           contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-md)', borderRadius: 8, fontSize: 11, fontFamily: 'Raleway' }}
         />
         <Bar dataKey="valor" radius={[4, 4, 0, 0]}>
