@@ -187,8 +187,8 @@ function StrategicContent() {
 
   if (dbLoading) return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, background: 'var(--bg-base)' }}>
-      <div className="auth-spin w-10 h-10 rounded-full" style={{ border: `2px solid ${COLORS.bac17}25`, borderTopColor: COLORS.bac17 }} />
-      <p style={{ color: COLORS.bac17, fontFamily: 'Raleway, sans-serif', fontSize: 13 }}>Cargando modelo estratégico…</p>
+      <div className="auth-spin w-10 h-10 rounded-full" style={{ border: `2px solid #C87A2F25`, borderTopColor: '#C87A2F' }} />
+      <p style={{ color: '#C87A2F', fontFamily: 'Raleway, sans-serif', fontSize: 13 }}>Cargando modelo estratégico…</p>
     </div>
   )
 
