@@ -1,12 +1,11 @@
-import { createContext, useContext, useReducer, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type {
   StrategicState, ComponenteMotivacional, PromesaDeValor,
   IndicadorLogro, SituacionObjetivo, ComponenteObjetivos,
-  AccionEstrategica,
+  AccionEstrategica, IndicadorEjecucion, EntradaTableroControl,
+  RolFuncion, Comite, ProcesoSeguimiento,
 } from '../types/strategic'
 import { emptyStrategicState } from '../types/strategic'
-import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../lib/supabase'
+import { createModuleStore } from './createModuleStore'
 
 export type StrategicAction =
   | { type: 'LOAD'; state: StrategicState }
@@ -16,6 +15,11 @@ export type StrategicAction =
   | { type: 'UPDATE_SITUACION'; patch: Partial<SituacionObjetivo> }
   | { type: 'UPDATE_OBJETIVOS'; patch: Partial<ComponenteObjetivos> }
   | { type: 'SET_ACCIONES'; items: AccionEstrategica[] }
+  | { type: 'SET_IND_EJECUCION'; items: IndicadorEjecucion[] }
+  | { type: 'SET_TABLERO'; items: EntradaTableroControl[] }
+  | { type: 'SET_ROLES'; items: RolFuncion[] }
+  | { type: 'SET_COMITES'; items: Comite[] }
+  | { type: 'SET_PROCESOS'; items: ProcesoSeguimiento[] }
 
 function reducer(state: StrategicState, action: StrategicAction): StrategicState {
   switch (action.type) {
@@ -33,81 +37,26 @@ function reducer(state: StrategicState, action: StrategicAction): StrategicState
       return { ...state, objetivos: { ...state.objetivos, ...action.patch } }
     case 'SET_ACCIONES':
       return { ...state, ejecucion: { ...state.ejecucion, acciones: action.items } }
+    case 'SET_IND_EJECUCION':
+      return { ...state, medicion: { ...state.medicion, indicadoresEjecucion: action.items } }
+    case 'SET_TABLERO':
+      return { ...state, medicion: { ...state.medicion, tableroControl: action.items } }
+    case 'SET_ROLES':
+      return { ...state, medicion: { ...state.medicion, roles: action.items } }
+    case 'SET_COMITES':
+      return { ...state, medicion: { ...state.medicion, comites: action.items } }
+    case 'SET_PROCESOS':
+      return { ...state, medicion: { ...state.medicion, procesos: action.items } }
     default:
       return state
   }
 }
 
-async function loadStrategic(wsId: string): Promise<StrategicState | null> {
-  const { data } = await supabase
-    .from('strategic_models')
-    .select('data')
-    .eq('workspace_id', wsId)
-    .single()
-  if (!data?.data) return null
-  return data.data as StrategicState
-}
+const { Provider: StrategicProvider, useStore: useStrategicStore } = createModuleStore(
+  'strategic_models',
+  reducer,
+  emptyStrategicState,
+  'Strategic',
+)
 
-async function saveStrategic(wsId: string, state: StrategicState) {
-  await supabase.from('strategic_models').upsert(
-    { workspace_id: wsId, data: state, updated_at: new Date().toISOString() },
-    { onConflict: 'workspace_id' }
-  )
-}
-
-interface StrategicContextValue {
-  state: StrategicState
-  dispatch: React.Dispatch<StrategicAction>
-  workspaceId: string | null
-  dbLoading: boolean
-}
-
-const StrategicContext = createContext<StrategicContextValue | null>(null)
-
-export function StrategicProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
-  const [state, localDispatch] = useReducer(reducer, emptyStrategicState())
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null)
-  const [dbLoading, setDbLoading] = useState(true)
-
-  useEffect(() => {
-    if (!user) { setDbLoading(false); return }
-    setDbLoading(true)
-    async function bootstrap() {
-      try {
-        const { data: ws } = await supabase.from('workspaces').select('id').eq('user_id', user!.id).single()
-        if (!ws) return
-        setWorkspaceId(ws.id)
-        const saved = await loadStrategic(ws.id)
-        if (saved) localDispatch({ type: 'LOAD', state: saved })
-      } catch (e) {
-        console.warn('[StrategicProvider] bootstrap error:', e)
-      } finally {
-        setDbLoading(false)
-      }
-    }
-    bootstrap()
-  }, [user?.id]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const dispatch = useCallback((action: StrategicAction) => {
-    localDispatch(action)
-  }, [])
-
-  useEffect(() => {
-    if (!workspaceId || dbLoading) return
-    const timer = setTimeout(() => saveStrategic(workspaceId, state), 1000)
-    return () => clearTimeout(timer)
-  }, [state, workspaceId, dbLoading])
-
-  return (
-    <StrategicContext.Provider value={{ state, dispatch, workspaceId, dbLoading }}>
-      {children}
-    </StrategicContext.Provider>
-  )
-}
-
-export function useStrategicStore() {
-  const ctx = useContext(StrategicContext)
-  if (!ctx) throw new Error('useStrategicStore must be used inside StrategicProvider')
-  return ctx
-}
+export { StrategicProvider, useStrategicStore }

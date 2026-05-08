@@ -3,7 +3,7 @@ import { Plus, Trash2, Target, Eye, Compass, Heart, Sparkles } from 'lucide-reac
 import { useStrategicStore } from '../../store/strategicStore'
 import type { ValorPrincipio } from '../../types/strategic'
 
-import { COLORS } from './colors'
+import { STRATEGIC_COLORS as COLORS } from '../../constants/colors'
 
 const ACCENT = COLORS.bac17
 const ACCENT_LIGHT = COLORS.bac17 + '1E'

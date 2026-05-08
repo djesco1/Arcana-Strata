@@ -59,29 +59,10 @@ export interface LineaNegocio {
   periodos: PeriodoFinanciero[]
 }
 
-export interface Bac39RowAnalysis {
-  evolucion: string
-  rangos: string
-  interpretacion: string
-}
-
-export interface Bac39Conclusion {
-  id: string
-  conclusion: string
-  justificacion: string
-}
-
-export interface Bac39Analysis {
-  rows: Record<string, Bac39RowAnalysis>
-  conclusiones: Bac39Conclusion[]
-  overrides?: Record<string, number>  // key: "${defId}|${lineaId}|${periodLabel}"
-}
-
 export interface FinancialState {
   lineas: LineaNegocio[]
   activeLineaId: string | null
   activePeriodoId: string | null
-  bac39?: Bac39Analysis
 }
 
 export const ieCalc = {

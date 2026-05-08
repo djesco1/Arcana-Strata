@@ -1,7 +1,5 @@
-import { createContext, useContext, useReducer, useState, useEffect, useCallback, type ReactNode } from 'react'
-import type { PeriodoFinanciero, FinancialState, LineaNegocio, IngresosEgresos, Bac39Analysis } from '../types/financial'
-import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../lib/supabase'
+import type { PeriodoFinanciero, FinancialState, LineaNegocio, IngresosEgresos } from '../types/financial'
+import { createModuleStore } from './createModuleStore'
 
 export type FinancialAction =
   | { type: 'LOAD'; state: Partial<FinancialState> }
@@ -14,7 +12,6 @@ export type FinancialAction =
   | { type: 'UPDATE_PERIODO'; lineaId: string; periodo: PeriodoFinanciero }
   | { type: 'DELETE_PERIODO'; lineaId: string; id: string }
   | { type: 'UPDATE_IE'; lineaId: string; periodoId: string; ie: IngresosEgresos }
-  | { type: 'UPDATE_BAC39'; bac39: Bac39Analysis }
 
 const EMPTY: FinancialState = { lineas: [], activeLineaId: null, activePeriodoId: null }
 
@@ -28,7 +25,6 @@ function reducer(state: FinancialState, action: FinancialAction): FinancialState
       const lineas = (action.state.lineas ?? state.lineas).map(l => ({ ...l, periodos: l.periodos ?? [] }))
       return { ...state, ...action.state, lineas }
     }
-
     case 'SET_LINEA':
       return { ...state, activeLineaId: action.id, activePeriodoId: null }
     case 'ADD_LINEA':
@@ -44,7 +40,6 @@ function reducer(state: FinancialState, action: FinancialAction): FinancialState
         activePeriodoId: state.activeLineaId === action.id ? null : state.activePeriodoId,
       }
     }
-
     case 'SET_PERIODO': return { ...state, activePeriodoId: action.id }
     case 'ADD_PERIODO': return {
       ...state,
@@ -68,79 +63,15 @@ function reducer(state: FinancialState, action: FinancialAction): FinancialState
         ...l, periodos: l.periodos.map(p => p.id === action.periodoId ? { ...p, ie: action.ie } : p),
       })),
     }
-
-    case 'UPDATE_BAC39': return { ...state, bac39: action.bac39 }
-
-    default: return state
+default: return state
   }
 }
 
-async function loadFinancial(wsId: string): Promise<Partial<FinancialState>> {
-  const { data } = await supabase.from('financial_models').select('data').eq('workspace_id', wsId).single()
-  if (!data?.data) return {}
-  return data.data as Partial<FinancialState>
-}
+const { Provider: FinancialProvider, useStore: useFinancialStore } = createModuleStore(
+  'financial_models',
+  reducer,
+  EMPTY,
+  'Financial',
+)
 
-async function saveFinancial(wsId: string, state: FinancialState) {
-  await supabase.from('financial_models').upsert(
-    { workspace_id: wsId, data: state, updated_at: new Date().toISOString() },
-    { onConflict: 'workspace_id' }
-  )
-}
-
-interface FinancialContextValue {
-  state: FinancialState
-  dispatch: React.Dispatch<FinancialAction>
-  workspaceId: string | null
-  dbLoading: boolean
-}
-
-const FinancialContext = createContext<FinancialContextValue | null>(null)
-
-export function FinancialProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
-  const [state, localDispatch] = useReducer(reducer, EMPTY)
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null)
-  const [dbLoading, setDbLoading] = useState(true)
-
-  useEffect(() => {
-    if (!user) { setDbLoading(false); return }
-    setDbLoading(true)
-    async function bootstrap() {
-      try {
-        const { data: ws } = await supabase.from('workspaces').select('id').eq('user_id', user!.id).single()
-        if (!ws) return
-        setWorkspaceId(ws.id)
-        const saved = await loadFinancial(ws.id)
-        if (saved && saved.lineas) localDispatch({ type: 'LOAD', state: saved })
-      } catch (e) {
-        console.warn('[FinancialProvider] bootstrap error:', e)
-      } finally {
-        setDbLoading(false)
-      }
-    }
-    bootstrap()
-  }, [user?.id]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const dispatch = useCallback((action: FinancialAction) => {
-    localDispatch(action)
-  }, [])
-
-  useEffect(() => {
-    if (!workspaceId || dbLoading) return
-    const timer = setTimeout(() => saveFinancial(workspaceId, state), 1000)
-    return () => clearTimeout(timer)
-  }, [state, workspaceId, dbLoading])
-
-  return (
-    <FinancialContext.Provider value={{ state, dispatch, workspaceId, dbLoading }}>
-      {children}
-    </FinancialContext.Provider>
-  )
-}
-
-export function useFinancialStore() {
-  const ctx = useContext(FinancialContext)
-  if (!ctx) throw new Error('useFinancialStore must be used inside FinancialProvider')
-  return ctx
-}
+export { FinancialProvider, useFinancialStore }

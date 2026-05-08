@@ -1,7 +1,7 @@
 import { Calendar, Trash2, Plus, AlertCircle } from 'lucide-react'
 import { useStrategicStore } from '../../store/strategicStore'
 import type { CambioIndicador } from '../../types/strategic'
-import { COLORS } from './colors'
+import { STRATEGIC_COLORS as COLORS } from '../../constants/colors'
 
 const C = COLORS.bac19
 const C_LIGHT = C + '1E'

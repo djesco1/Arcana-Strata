@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Plus, Trash2, ChevronRight, ChevronDown, Flag, Calendar } from 'lucide-react'
 import { useStrategicStore } from '../../store/strategicStore'
 import type { ObjetivoEstrategico, MetaEstrategica, CambioIndicador } from '../../types/strategic'
-import { COLORS } from './colors'
+import { STRATEGIC_COLORS as COLORS } from '../../constants/colors'
 
 const C = COLORS.bac20
 const C_LIGHT = C + '1E'

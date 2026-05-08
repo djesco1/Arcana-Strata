@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Maximize2, X } from 'lucide-react'
 import { useStrategicStore } from '../../store/strategicStore'
-import { COLORS } from './colors'
+import { STRATEGIC_COLORS as COLORS } from '../../constants/colors'
 import type { StrategicState } from '../../types/strategic'
 
 // ── Shared primitives ────────────────────────────────────────────────────────
@@ -249,16 +249,6 @@ function MiniCard({ label, text, color }: { label: string; text: string; color: 
   )
 }
 
-function CompactArrow({ color }: { color: string }) {
-  return (
-    <div style={{ display: 'flex', padding: '5px 0 5px 8px' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 12 }}>
-        <div style={{ width: 1, height: 8, background: color + '60' }} />
-        <span style={{ fontSize: 7, color: color + '80', lineHeight: 1, marginTop: -1 }}>▾</span>
-      </div>
-    </div>
-  )
-}
 
 function LevelChip({ color, code, label }: { color: string; code: string; label: string }) {
   return (
@@ -291,8 +281,6 @@ function CompactCascade({ state }: { state: StrategicState }) {
         : empty('Sin propósito definido')
       }
 
-      <CompactArrow color={COLORS.bac17} />
-
       {/* Fundamentos */}
       <LevelChip color={COLORS.bac17} code="17" label="Fundamentos" />
       {(m.vision || m.mision || m.objetivoRetador)
@@ -303,8 +291,6 @@ function CompactCascade({ state }: { state: StrategicState }) {
           </>
         : empty('Sin fundamentos definidos')
       }
-
-      <CompactArrow color={COLORS.bac21} />
 
       {/* Decisiones */}
       <LevelChip color={COLORS.bac21} code="21" label="Decisiones" />
@@ -326,8 +312,6 @@ function CompactCascade({ state }: { state: StrategicState }) {
           </div>
         : empty('Sin decisiones estratégicas')
       }
-
-      <CompactArrow color={COLORS.bac20} />
 
       {/* Objetivos */}
       <LevelChip color={COLORS.bac20} code="20" label="Objetivos" />
@@ -354,7 +338,6 @@ function CompactCascade({ state }: { state: StrategicState }) {
       {/* Valores chips */}
       {m.valores.length > 0 && (
         <>
-          <CompactArrow color={COLORS.bac17} />
           <LevelChip color={COLORS.bac17} code="17" label="Valores" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {m.valores.map(v => (

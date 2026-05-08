@@ -108,6 +108,74 @@ export interface ComponenteEjecucion {
   acciones: AccionEstrategica[]
 }
 
+// BAC-26: Catálogo de indicadores de ejecución
+
+export interface IndicadorEjecucion {
+  id: string
+  nombre: string
+  descripcion: string
+}
+
+// BAC-27: Tablero de control de la ejecución
+
+export interface EntradaTableroControl {
+  id: string
+  idAccion: string
+  idIndicador: string
+  valorActual: string
+  valorEsperado: string
+  estado: string
+}
+
+// BAC-28: Catálogo de roles y funciones
+
+export interface FuncionRol {
+  id: string
+  descripcion: string
+}
+
+export interface RolFuncion {
+  id: string
+  rol: string
+  funciones: FuncionRol[]
+}
+
+// BAC-29: Catálogo de comités
+
+export interface FuncionComite {
+  id: string
+  descripcion: string
+}
+
+export interface Comite {
+  id: string
+  nombre: string
+  idRolesParticipantes: string[]
+  funciones: FuncionComite[]
+}
+
+// BAC-30: Catálogo de procesos de seguimiento y gobierno
+
+export interface ActividadProceso {
+  id: string
+  descripcion: string
+}
+
+export interface ProcesoSeguimiento {
+  id: string
+  nombre: string
+  objetivo: string
+  actividades: ActividadProceso[]
+}
+
+export interface ComponenteMedicion {
+  indicadoresEjecucion: IndicadorEjecucion[]
+  tableroControl: EntradaTableroControl[]
+  roles: RolFuncion[]
+  comites: Comite[]
+  procesos: ProcesoSeguimiento[]
+}
+
 // Full state
 
 export interface StrategicState {
@@ -117,6 +185,7 @@ export interface StrategicState {
   situacionObjetivo: SituacionObjetivo
   objetivos: ComponenteObjetivos
   ejecucion: ComponenteEjecucion
+  medicion: ComponenteMedicion
 }
 
 // Factories
@@ -142,6 +211,13 @@ export function emptyStrategicState(): StrategicState {
     },
     ejecucion: {
       acciones: [],
+    },
+    medicion: {
+      indicadoresEjecucion: [],
+      tableroControl: [],
+      roles: [],
+      comites: [],
+      procesos: [],
     },
   }
 }

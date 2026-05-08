@@ -173,6 +173,11 @@ export interface WorkspaceCounts {
   strategicObjetivos: number
   strategicDecisiones: number
   strategicIndicadores: number
+  strategicAcciones: number
+  capPaquetes: number
+  capTotal: number
+  capCriticas: number
+  capServicios: number
 }
 
 export async function loadWorkspaceCounts(wsId: string): Promise<WorkspaceCounts> {
@@ -230,12 +235,24 @@ export async function loadWorkspaceCounts(wsId: string): Promise<WorkspaceCounts
     return uai - impuestos
   })() : 0
 
-  type StrategicData = { objetivos?: { objetivos?: unknown[] }; promesaValor?: unknown[]; indicadoresLogro?: unknown[] }
+  type StrategicData = { objetivos?: { objetivos?: unknown[] }; promesaValor?: unknown[]; indicadoresLogro?: unknown[]; ejecucion?: { acciones?: unknown[] } }
   const { data: strat } = await supabase.from('strategic_models').select('data').eq('workspace_id', wsId).single()
   const sd = strat?.data as StrategicData | null
   const strategicObjetivos   = sd?.objetivos?.objetivos?.length ?? 0
   const strategicDecisiones  = sd?.promesaValor?.length ?? 0
   const strategicIndicadores = sd?.indicadoresLogro?.length ?? 0
+  const strategicAcciones    = sd?.ejecucion?.acciones?.length ?? 0
+
+  type CapSub = { capacidades?: { critica?: boolean }[] }
+  type CapPaq = { subpaquetes?: CapSub[] }
+  type CapData = { paquetes?: CapPaq[]; serviciosNegocio?: unknown[]; serviciosInternos?: unknown[] }
+  const { data: capRaw } = await supabase.from('capability_models').select('data').eq('workspace_id', wsId).single()
+  const cd = capRaw?.data as CapData | null
+  const capPaquetes = cd?.paquetes?.length ?? 0
+  const capAllCaps = (cd?.paquetes ?? []).flatMap(p => (p.subpaquetes ?? []).flatMap(s => s.capacidades ?? []))
+  const capTotal   = capAllCaps.length
+  const capCriticas = capAllCaps.filter(c => c.critica).length
+  const capServicios = (cd?.serviciosNegocio?.length ?? 0) + (cd?.serviciosInternos?.length ?? 0)
 
   return {
     actores: a.count ?? 0,
@@ -255,6 +272,11 @@ export async function loadWorkspaceCounts(wsId: string): Promise<WorkspaceCounts
     strategicObjetivos,
     strategicDecisiones,
     strategicIndicadores,
+    strategicAcciones,
+    capPaquetes,
+    capTotal,
+    capCriticas,
+    capServicios,
   }
 }
 

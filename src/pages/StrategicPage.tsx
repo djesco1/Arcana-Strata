@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, Zap, BarChart3, Flag, Target, Activity, FileText, GanttChart, GitFork } from 'lucide-react'
+import { Sparkles, Zap, BarChart3, Flag, Target, Activity, FileText, GanttChart, GitFork, TrendingUp, Monitor, Users, Building, ClipboardList } from 'lucide-react'
 import { StrategicProvider, useStrategicStore } from '../store/strategicStore'
 import { Header } from '../components/layout/Header'
 import { MotivacionalSection } from '../components/strategic/MotivacionalSection'
@@ -12,12 +12,16 @@ import { AccionesEstrategicasSection } from '../components/strategic/AccionesEst
 import { FichaAccionSection } from '../components/strategic/FichaAccionSection'
 import { GanttSection } from '../components/strategic/GanttSection'
 import { GrafoDependenciasSection } from '../components/strategic/GrafoDependenciasSection'
-import { StrategicMap } from '../components/strategic/StrategicMap'
-import { COLORS } from '../components/strategic/colors'
+import { CatalogoIndEjecucionSection } from '../components/strategic/CatalogoIndEjecucionSection'
+import { TableroControlSection } from '../components/strategic/TableroControlSection'
+import { RolesFuncionesSection } from '../components/strategic/RolesFuncionesSection'
+import { ComitesSection } from '../components/strategic/ComitesSection'
+import { ProcesosSeguimientoSection } from '../components/strategic/ProcesosSeguimientoSection'
+import { STRATEGIC_COLORS as COLORS } from '../constants/colors'
 import { useAuth } from '../hooks/useAuth'
 
 // ── Sidebar definition ────────────────────────────────────────────────────────
-type BACKey = 'bac17' | 'bac21' | 'bac18' | 'bac19' | 'bac20' | 'bac22' | 'bac23' | 'bac24' | 'bac25'
+type BACKey = 'bac17' | 'bac21' | 'bac18' | 'bac19' | 'bac20' | 'bac22' | 'bac23' | 'bac24' | 'bac25' | 'bac26' | 'bac27' | 'bac28' | 'bac29' | 'bac30'
 
 interface BACItem {
   key: BACKey
@@ -43,6 +47,13 @@ const GROUP_EJEC: BACItem[] = [
   { key: 'bac23', icon: FileText,  code: '23', label: 'Ficha de Accion',      color: COLORS.bac23 },
   { key: 'bac24', icon: GanttChart,code: '24', label: 'Diagrama de Gantt',    color: COLORS.bac24 },
   { key: 'bac25', icon: GitFork,   code: '25', label: 'Grafo de Dependencias',color: COLORS.bac25 },
+]
+const GROUP_MED: BACItem[] = [
+  { key: 'bac26', icon: TrendingUp,    code: '26', label: 'Ind. Ejecución',    color: COLORS.bac26 },
+  { key: 'bac27', icon: Monitor,       code: '27', label: 'Tablero Control',   color: COLORS.bac27 },
+  { key: 'bac28', icon: Users,         code: '28', label: 'Roles y Funciones', color: COLORS.bac28 },
+  { key: 'bac29', icon: Building,      code: '29', label: 'Comités',           color: COLORS.bac29 },
+  { key: 'bac30', icon: ClipboardList, code: '30', label: 'Proc. Gobierno',    color: COLORS.bac30 },
 ]
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -101,6 +112,7 @@ function SidebarBtn({ item, active, onClick, count }: {
 function StrategicSidebar({ active, onChange }: { active: BACKey; onChange: (k: BACKey) => void }) {
   const { state } = useStrategicStore()
   const acc = state.ejecucion?.acciones ?? []
+  const med = state.medicion
   const counts: Record<BACKey, number> = {
     bac17: state.motivacional.valores.length,
     bac21: state.promesaValor.length,
@@ -111,6 +123,11 @@ function StrategicSidebar({ active, onChange }: { active: BACKey; onChange: (k: 
     bac23: acc.reduce((s, a) => s + (a.accionesTacticas?.length ?? 0), 0),
     bac24: acc.filter(a => a.fechaInicio && a.fechaFin).length,
     bac25: acc.reduce((s, a) => s + (a.prerrequisitos?.length ?? 0), 0),
+    bac26: med.indicadoresEjecucion.length,
+    bac27: med.tableroControl.length,
+    bac28: med.roles.length,
+    bac29: med.comites.length,
+    bac30: med.procesos.length,
   }
 
   const renderGroup = (items: BACItem[]) => items.map(item => (
@@ -137,6 +154,10 @@ function StrategicSidebar({ active, onChange }: { active: BACKey; onChange: (k: 
       <Divider />
       <GroupLabel>Ejec.</GroupLabel>
       {renderGroup(GROUP_EJEC)}
+
+      <Divider />
+      <GroupLabel>Med.</GroupLabel>
+      {renderGroup(GROUP_MED)}
     </div>
   )
 }
@@ -152,7 +173,12 @@ const BAC_META: Record<BACKey, { icon: React.ElementType; code: string; title: s
   bac22: { icon: Activity,   code: 'BAC-22', title: 'Catalogo de Acciones',        desc: 'Catalogo de acciones estrategicas con responsable, fechas e indicadores de logro asociados',    color: COLORS.bac22 },
   bac23: { icon: FileText,   code: 'BAC-23', title: 'Ficha de una Accion',         desc: 'Detalle de cada accion estrategica: costo, proyecto, prerrequisitos y acciones tacticas',        color: COLORS.bac23 },
   bac24: { icon: GanttChart, code: 'BAC-24', title: 'Diagrama de Gantt',           desc: 'Linea de tiempo de las acciones estrategicas distribuidas por mes',                              color: COLORS.bac24 },
-  bac25: { icon: GitFork,    code: 'BAC-25', title: 'Grafo de Dependencias',       desc: 'Diagrama de dependencias entre acciones estrategicas segun sus prerrequisitos',                  color: COLORS.bac25 },
+  bac25: { icon: GitFork,      code: 'BAC-25', title: 'Grafo de Dependencias',            desc: 'Diagrama de dependencias entre acciones estrategicas segun sus prerrequisitos',                  color: COLORS.bac25 },
+  bac26: { icon: TrendingUp,   code: 'BAC-26', title: 'Catalogo de Indicadores de Ejecucion', desc: 'Indicadores utilizados para medir el avance de las acciones estrategicas',                   color: COLORS.bac26 },
+  bac27: { icon: Monitor,      code: 'BAC-27', title: 'Tablero de Control de la Ejecucion', desc: 'Estado actual de cada accion estrategica segun sus indicadores de ejecucion',                  color: COLORS.bac27 },
+  bac28: { icon: Users,        code: 'BAC-28', title: 'Catalogo de Roles y Funciones',     desc: 'Roles responsables del seguimiento de la ejecucion y garantia del plan estrategico',           color: COLORS.bac28 },
+  bac29: { icon: Building,     code: 'BAC-29', title: 'Catalogo de Comites',               desc: 'Comites estrategicos y operativos con roles participantes y funciones asignadas',               color: COLORS.bac29 },
+  bac30: { icon: ClipboardList,code: 'BAC-30', title: 'Catalogo de Procesos de Gobierno',  desc: 'Procesos de seguimiento y gobierno con sus objetivos y secuencia de actividades',             color: COLORS.bac30 },
 }
 
 function PanelHeading({ bacKey }: { bacKey: BACKey }) {
@@ -218,10 +244,14 @@ function StrategicContent() {
             {activeBAC === 'bac23' && <FichaAccionSection />}
             {activeBAC === 'bac24' && <GanttSection />}
             {activeBAC === 'bac25' && <GrafoDependenciasSection />}
+            {activeBAC === 'bac26' && <CatalogoIndEjecucionSection />}
+            {activeBAC === 'bac27' && <TableroControlSection />}
+            {activeBAC === 'bac28' && <RolesFuncionesSection />}
+            {activeBAC === 'bac29' && <ComitesSection />}
+            {activeBAC === 'bac30' && <ProcesosSeguimientoSection />}
           </div>
         </div>
 
-        <StrategicMap />
       </div>
     </div>
   )

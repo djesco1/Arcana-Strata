@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { useStrategicStore } from '../../store/strategicStore'
 import type { AccionEstrategica } from '../../types/strategic'
-import { COLORS } from './colors'
+import { STRATEGIC_COLORS as COLORS } from '../../constants/colors'
 
 const C = COLORS.bac25
 

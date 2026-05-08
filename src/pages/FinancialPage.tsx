@@ -9,15 +9,13 @@ import { ConsolidatedPyGChart } from '../components/financial/ConsolidatedPyGCha
 import { BalanceChart } from '../components/financial/BalanceChart'
 import { CashFlowChart } from '../components/financial/CashFlowChart'
 import { IndicatorsPanel } from '../components/financial/IndicatorsPanel'
-import { BAC39Table } from '../components/financial/BAC39Table'
-import type { Bac39Analysis } from '../types/financial'
 import { PeriodoEditor } from '../components/financial/PeriodoEditor'
 import { IngresosEgresosTable } from '../components/financial/IngresosEgresosTable'
 import { calcIndicadores } from '../components/financial/utils'
 import type { LineaNegocio, PeriodoFinanciero } from '../types/financial'
 import { emptyIE } from '../types/financial'
 
-type Tab = 'ie' | 'balance' | 'flujo' | 'indicadores' | 'bac39'
+type Tab = 'ie' | 'balance' | 'flujo' | 'indicadores'
 
 const C = '#1B7A5F'
 const C_LIGHT = 'rgba(27,122,95,0.12)'
@@ -56,7 +54,6 @@ function FinancialContent() {
     { key: 'balance', label: 'Balance General' },
     { key: 'flujo', label: 'Flujo de Caja' },
     { key: 'indicadores', label: 'Indicadores' },
-    { key: 'bac39', label: 'Análisis Horizontal' },
   ]
 
   function handleSavePeriodo(p: PeriodoFinanciero) {
@@ -83,10 +80,7 @@ function FinancialContent() {
   }
 
   const indicators = activePeriodo ? calcIndicadores(activePeriodo) : null
-  const emptyBac39: Bac39Analysis = { rows: {}, conclusiones: [] }
-  const bac39 = state.bac39 ?? emptyBac39
-
-  if (dbLoading) {
+if (dbLoading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'var(--bg-base)' }}>
         <div style={{ textAlign: 'center' }}>
@@ -423,15 +417,6 @@ function FinancialContent() {
                   </ChartCard>
                 )}
 
-                {activeTab === 'bac39' && (
-                  <ChartCard title="Análisis Horizontal" badge="BAC-39" subtitle="Los 25 indicadores financieros a través del tiempo, por línea de negocio, con análisis e interpretación">
-                    <BAC39Table
-                      lineas={lineas}
-                      bac39={bac39}
-                      onUpdate={b => dispatch({ type: 'UPDATE_BAC39', bac39: b })}
-                    />
-                  </ChartCard>
-                )}
               </div>
             )}
           </div>

@@ -56,13 +56,19 @@ const MODELS: ModelDef[] = [
       { label: 'Objetivos', value: c.strategicObjetivos },
       { label: 'Decisiones', value: c.strategicDecisiones },
       { label: 'Indicadores', value: c.strategicIndicadores },
+      { label: 'Acciones', value: c.strategicAcciones },
     ],
   },
   {
     id: 4, key: 'capacidades', name: 'Modelo de Capacidades', short: 'Capacidades',
-    description: 'Competencias, habilidades y capacidades organizacionales.',
-    icon: Zap, color: '#9B8FE4', available: false,
-    getMetrics: () => [{ label: 'Capacidades', value: 0 }, { label: 'Brechas', value: 0 }, { label: 'Dominios', value: 0 }],
+    description: 'Paquetes, subpaquetes y mapa visual de capacidades organizacionales.',
+    icon: Zap, color: '#6D28D9', available: true, route: '/app/capacidades',
+    getMetrics: c => [
+      { label: 'Paquetes', value: c.capPaquetes },
+      { label: 'Capacidades', value: c.capTotal },
+      { label: 'Críticas', value: c.capCriticas },
+      { label: 'Servicios', value: c.capServicios },
+    ],
   },
   {
     id: 5, key: 'organizacional', name: 'Modelo Organizacional', short: 'Organizacional',
@@ -114,7 +120,7 @@ function ModelCard({ model, counts, onNavigate }: {
 }) {
   const Icon = model.icon
   const active = model.available && !!counts
-  const ZERO_COUNTS: WorkspaceCounts = { actores: 0, servicios: 0, canales: 0, componentes: 0, recursos: 0, escenarios: 0, participantes: 0, medios: 0, journeys: 0, canvasNodes: 0, financialLineas: 0, financialPeriodos: 0, financialIngresos: 0, financialUtilidadNeta: 0, strategicObjetivos: 0, strategicDecisiones: 0, strategicIndicadores: 0 }
+  const ZERO_COUNTS: WorkspaceCounts = { actores: 0, servicios: 0, canales: 0, componentes: 0, recursos: 0, escenarios: 0, participantes: 0, medios: 0, journeys: 0, canvasNodes: 0, financialLineas: 0, financialPeriodos: 0, financialIngresos: 0, financialUtilidadNeta: 0, strategicObjetivos: 0, strategicDecisiones: 0, strategicIndicadores: 0, strategicAcciones: 0, capPaquetes: 0, capTotal: 0, capCriticas: 0, capServicios: 0 }
   const metrics = model.getMetrics(counts ?? ZERO_COUNTS)
   const started = active && hasActivity(counts!, model)
 
